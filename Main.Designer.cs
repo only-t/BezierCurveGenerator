@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.MainTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
             this.ActionTypeBtn = new System.Windows.Forms.ComboBox();
@@ -36,6 +37,7 @@
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.MaxPointsLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.DrawSkelCheck = new System.Windows.Forms.CheckBox();
+            this.DrawControlPointsCheck = new System.Windows.Forms.CheckBox();
             this.MainTableLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.StatusStrip.SuspendLayout();
@@ -53,19 +55,21 @@
             this.MainTableLayout.Controls.Add(this.ActionTypeBtn, 3, 2);
             this.MainTableLayout.Controls.Add(this.ResetBtn, 3, 3);
             this.MainTableLayout.Controls.Add(this.CurveChooseBtn, 3, 1);
-            this.MainTableLayout.Controls.Add(this.StatusStrip, 1, 6);
-            this.MainTableLayout.Controls.Add(this.DrawSkelCheck, 3, 5);
+            this.MainTableLayout.Controls.Add(this.StatusStrip, 1, 7);
+            this.MainTableLayout.Controls.Add(this.DrawSkelCheck, 3, 6);
+            this.MainTableLayout.Controls.Add(this.DrawControlPointsCheck, 3, 5);
             this.MainTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTableLayout.Location = new System.Drawing.Point(0, 0);
             this.MainTableLayout.Margin = new System.Windows.Forms.Padding(0);
             this.MainTableLayout.Name = "MainTableLayout";
-            this.MainTableLayout.RowCount = 7;
+            this.MainTableLayout.RowCount = 8;
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.MainTableLayout.Size = new System.Drawing.Size(800, 450);
             this.MainTableLayout.TabIndex = 0;
@@ -77,12 +81,14 @@
             this.MainPictureBox.Location = new System.Drawing.Point(20, 20);
             this.MainPictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.MainPictureBox.Name = "MainPictureBox";
-            this.MainTableLayout.SetRowSpan(this.MainPictureBox, 5);
+            this.MainTableLayout.SetRowSpan(this.MainPictureBox, 6);
             this.MainPictureBox.Size = new System.Drawing.Size(612, 410);
             this.MainPictureBox.TabIndex = 1;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.Click += new System.EventHandler(this.MainPictureBox_Click);
+            this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);
             this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
+            this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
             // 
             // ActionTypeBtn
             // 
@@ -95,7 +101,7 @@
             "Add Curve",
             "Add Control Point",
             "Remove Point"});
-            this.ActionTypeBtn.Location = new System.Drawing.Point(655, 97);
+            this.ActionTypeBtn.Location = new System.Drawing.Point(655, 98);
             this.ActionTypeBtn.Margin = new System.Windows.Forms.Padding(0);
             this.ActionTypeBtn.MaxDropDownItems = 2;
             this.ActionTypeBtn.Name = "ActionTypeBtn";
@@ -161,7 +167,7 @@
             this.DrawSkelCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.DrawSkelCheck.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.DrawSkelCheck.Font = new System.Drawing.Font("Bahnschrift", 10F);
-            this.DrawSkelCheck.Location = new System.Drawing.Point(663, 389);
+            this.DrawSkelCheck.Location = new System.Drawing.Point(663, 401);
             this.DrawSkelCheck.Margin = new System.Windows.Forms.Padding(0);
             this.DrawSkelCheck.Name = "DrawSkelCheck";
             this.DrawSkelCheck.Size = new System.Drawing.Size(106, 22);
@@ -170,6 +176,22 @@
             this.DrawSkelCheck.UseVisualStyleBackColor = true;
             this.DrawSkelCheck.CheckedChanged += new System.EventHandler(this.DrawSkelCheck_CheckedChanged);
             // 
+            // DrawControlPointsCheck
+            // 
+            this.DrawControlPointsCheck.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.DrawControlPointsCheck.Checked = true;
+            this.DrawControlPointsCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DrawControlPointsCheck.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.DrawControlPointsCheck.Font = new System.Drawing.Font("Bahnschrift", 10F);
+            this.DrawControlPointsCheck.Location = new System.Drawing.Point(663, 365);
+            this.DrawControlPointsCheck.Margin = new System.Windows.Forms.Padding(0);
+            this.DrawControlPointsCheck.Name = "DrawControlPointsCheck";
+            this.DrawControlPointsCheck.Size = new System.Drawing.Size(106, 22);
+            this.DrawControlPointsCheck.TabIndex = 7;
+            this.DrawControlPointsCheck.Text = "Draw Points";
+            this.DrawControlPointsCheck.UseVisualStyleBackColor = true;
+            this.DrawControlPointsCheck.CheckedChanged += new System.EventHandler(this.DrawControlPointsCheck_CheckedChanged);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -177,6 +199,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.MainTableLayout);
             this.Font = new System.Drawing.Font("Bahnschrift", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.Text = "Bézier Curve Generator";
             this.MainTableLayout.ResumeLayout(false);
@@ -198,6 +221,7 @@
         private System.Windows.Forms.StatusStrip StatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel MaxPointsLabel;
         private System.Windows.Forms.CheckBox DrawSkelCheck;
+        private System.Windows.Forms.CheckBox DrawControlPointsCheck;
     }
 }
 

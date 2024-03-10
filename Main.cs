@@ -19,8 +19,9 @@ namespace BezierCurveGenerator
         private const int POINT_SELECT_RADIUS = 2;
 
         private readonly Color endPointColor = Color.FromKnownColor(KnownColor.Black);
-        private readonly Color curveColor = Color.FromKnownColor(KnownColor.Black);
         private readonly Color midPointColor = Color.FromKnownColor(KnownColor.Gray);
+        private readonly Color toRemovePointColor = Color.FromKnownColor(KnownColor.Red);
+        private readonly Color curveColor = Color.FromKnownColor(KnownColor.Black);
         private readonly Color skeletonLineColor = Color.FromKnownColor(KnownColor.Gray);
 
         private List<BezierCurve> curves = new List<BezierCurve>();
@@ -28,6 +29,7 @@ namespace BezierCurveGenerator
         private BezierCurve currentCurve;
         private Point dummyP = new Point(0, 0); // ?
         private Point selectedPoint;
+        private bool movingPoint = false;
 
         public Main()
         {
@@ -45,7 +47,7 @@ namespace BezierCurveGenerator
             switch(actType)
             {
                 case ACTION_TYPE.ADD_CURVE:
-                    if(selectedPoint == dummyP)
+                    if(selectedPoint != dummyP)
                     {
                         return;
                     }
@@ -58,12 +60,12 @@ namespace BezierCurveGenerator
 
                     break;
                 case ACTION_TYPE.ADD_POINT:
-                    if(currentCurve == null || selectedPoint == dummyP)
+                    if(currentCurve == null || selectedPoint != dummyP)
                     {
                         return;
                     }
 
-                    if(currentCurve.GetPoints().Length < MAX_POINTS)
+                    if(currentCurve.GetPoints().Count < MAX_POINTS)
                     {
                         currentCurve.AddControlPoint(new Point(mouseEventArgs.X, mouseEventArgs.Y));
                         UpdateImage();
@@ -71,9 +73,51 @@ namespace BezierCurveGenerator
 
                     break;
                 case ACTION_TYPE.REMOVE_POINT:
-                    if (currentCurve == null || selectedPoint == dummyP)
+                    if(currentCurve == null || selectedPoint == dummyP)
                     {
                         return;
+                    }
+
+                    bool removed = false;
+                    for(int i = 0; i < curves.Count; i++)
+                    {
+                        BezierCurve c = curves[i];
+                        List<Point> pts = c.GetPoints();
+                        foreach(Point p in pts)
+                        {
+                            if(p == selectedPoint)
+                            {
+                                pts.Remove(p);
+                                removed = true;
+
+                                break;
+                            }
+                        }
+
+                        if(removed)
+                        {
+                            if(pts.Count <= 0)
+                            {
+                                curves.Remove(c);
+
+                                CurveChooseBtn.Items.Clear();
+                                if (curves.Count <= 0)
+                                {
+                                    CurveChooseBtn.SelectedIndex = -1;
+                                    CurveChooseBtn.Enabled = false;
+                                } else
+                                {
+                                    for (int j = 1; j <= curves.Count; j++)
+                                    {
+                                        CurveChooseBtn.Items.Add("Curve #" + j);
+                                    }
+
+                                    CurveChooseBtn.SelectedIndex = curves.Count - 1;
+                                }
+                            }
+
+                            break;
+                        }
                     }
 
                     UpdateImage();
@@ -141,16 +185,16 @@ namespace BezierCurveGenerator
             // Draw curve
             foreach (BezierCurve c in curves)
             {
-                Point[] pts = c.GetPoints();
+                List<Point> pts = c.GetPoints();
 
-                int order = pts.Length - 1;
+                int order = pts.Count - 1;
                 bool drawCurve = false;
                 switch (order)
                 {
                     case 0:
                         break;
                     case 1:
-                        // TODO
+                        DrawLine(bitmap, pts[0], pts[1], curveColor);
                         break;
                     default:
                         drawCurve = true;
@@ -177,12 +221,18 @@ namespace BezierCurveGenerator
                 }
 
                 // Draw points
-                for (int i = 0; i < pts.Length; i++)
+                for (int i = 0; i < pts.Count; i++)
                 {
+                    // Draw curve skeleton
+                    if (DrawSkelCheck.Checked && i > 0 && order > 1)
+                    {
+                        DrawLine(bitmap, pts[i], pts[i - 1], skeletonLineColor);
+                    }
+
                     int pSize = 1;
                     Color pColor = midPointColor;
 
-                    if (i == 0 || i == pts.Length - 1)
+                    if (i == 0 || i == pts.Count - 1)
                     {
                         pSize++;
                         pColor = endPointColor;
@@ -191,6 +241,11 @@ namespace BezierCurveGenerator
                     if (pts[i] == selectedPoint)
                     {
                         pSize++;
+
+                        if(actType == ACTION_TYPE.REMOVE_POINT)
+                        {
+                            pColor = toRemovePointColor;
+                        }
                     }
 
                     for (int x = -pSize; x <= pSize; x++)
@@ -203,12 +258,6 @@ namespace BezierCurveGenerator
                             }
                             catch (ArgumentOutOfRangeException) { }
                         }
-                    }
-
-                    // Draw curve skeleton
-                    if(DrawSkelCheck.Checked && i > 0)
-                    {
-                        DrawLine(bitmap, pts[i], pts[i - 1], skeletonLineColor);
                     }
                 }
             }
@@ -274,6 +323,29 @@ namespace BezierCurveGenerator
             }
 
             selectedPoint = dummyP;
+            UpdateImage();
+
+            Console.WriteLine(movingPoint);
+        }
+
+        private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(selectedPoint != dummyP)
+            {
+                movingPoint = true;
+            }
+        }
+
+        private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(movingPoint)
+            {
+                movingPoint = false;
+            }
+        }
+
+        private void DrawControlPointsCheck_CheckedChanged(object sender, EventArgs e)
+        {
             UpdateImage();
         }
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 namespace BezierCurveGenerator
@@ -23,9 +22,9 @@ namespace BezierCurveGenerator
             points.Remove(p);
         }
 
-        public Point[] GetPoints()
+        public List<Point> GetPoints()
         {
-            return points.ToArray();
+            return points;
         }
     }
 }
