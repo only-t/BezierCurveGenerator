@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Security;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace BezierCurveGenerator
 {
@@ -29,7 +33,6 @@ namespace BezierCurveGenerator
         private BezierCurve currentCurve;
         private Point dummyP = new Point(0, 0); // ?
         private Point selectedPoint;
-        private bool movingPoint = false;
 
         public Main()
         {
@@ -134,6 +137,58 @@ namespace BezierCurveGenerator
             }
         }
 
+        private void LoadFromFile(Stream input)
+        {
+            if(curves.Count > 0)
+            {
+                ClearCurves();
+            }
+
+            using (StreamReader reader = new StreamReader(input))
+            {
+                try
+                {
+                    int curveAmount = int.Parse(reader.ReadLine());
+                    for(int i = 0; i < curveAmount; i++)
+                    {
+                        int order = int.Parse(reader.ReadLine());
+                        BezierCurve curve = null;
+
+                        for(int j = 0; j <= order; j++)
+                        {
+                            string[] ints = reader.ReadLine().Split();
+                            Point p = new Point(int.Parse(ints[0]), int.Parse(ints[1]));
+
+                            if(curve == null)
+                            {
+                                curve = new BezierCurve(p);
+                            } else
+                            {
+                                curve.AddControlPoint(p);
+                            }
+                        }
+
+                        curves.Add(curve);
+
+                        if(!CurveChooseBtn.Enabled)
+                        {
+                            CurveChooseBtn.Enabled = true;
+                        }
+
+                        CurveChooseBtn.Items.Add("Curve #" + curves.Count);
+                    }
+
+                    CurveChooseBtn.SelectedIndex = curveAmount - 1;
+                } catch(FormatException)
+                {
+                    MessageBox.Show("Cannot load the file!", "Error!", MessageBoxButtons.OK);
+                    return;
+                }
+
+                UpdateImage();
+            }
+        }
+
         private int BinomialCoefficient(int n, int k)
         {
             if(k > n)
@@ -220,13 +275,18 @@ namespace BezierCurveGenerator
                     }
                 }
 
-                // Draw points
                 for (int i = 0; i < pts.Count; i++)
                 {
                     // Draw curve skeleton
                     if (DrawSkelCheck.Checked && i > 0 && order > 1)
                     {
                         DrawLine(bitmap, pts[i], pts[i - 1], skeletonLineColor);
+                    }
+
+                    // Draw points
+                    if(i != 0 && i != pts.Count - 1 && !DrawControlPointsCheck.Checked)
+                    {
+                        continue;
                     }
 
                     int pSize = 1;
@@ -252,11 +312,10 @@ namespace BezierCurveGenerator
                     {
                         for (int y = -pSize; y <= pSize; y++)
                         {
-                            try
-                            {
-                                bitmap.SetPixel(pts[i].X + x, pts[i].Y + y, pColor);
-                            }
-                            catch (ArgumentOutOfRangeException) { }
+                            bitmap.SetPixel(
+                                Math.Min(Math.Max(pts[i].X + x, 0), MainPictureBox.Width),
+                                Math.Min(Math.Max(pts[i].Y + y, 0), MainPictureBox.Height),
+                                pColor);
                         }
                     }
                 }
@@ -267,6 +326,10 @@ namespace BezierCurveGenerator
 
         private void UpdateImage()
         {
+            if(MainPictureBox.Image != null)
+            {
+                MainPictureBox.Image.Dispose();
+            }
             Bitmap btm = GenerateImage();
             MainPictureBox.Image = btm;
         }
@@ -304,8 +367,7 @@ namespace BezierCurveGenerator
         {
             int mX = e.X;
             int mY = e.Y;
-
-            foreach (BezierCurve c in curves)
+            foreach(BezierCurve c in curves)
             {
                 foreach(Point p in c.GetPoints())
                 {
@@ -324,29 +386,37 @@ namespace BezierCurveGenerator
 
             selectedPoint = dummyP;
             UpdateImage();
-
-            Console.WriteLine(movingPoint);
-        }
-
-        private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            if(selectedPoint != dummyP)
-            {
-                movingPoint = true;
-            }
-        }
-
-        private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            if(movingPoint)
-            {
-                movingPoint = false;
-            }
         }
 
         private void DrawControlPointsCheck_CheckedChanged(object sender, EventArgs e)
         {
             UpdateImage();
+        }
+
+        private void OpenFileBtn_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog()
+            {
+                FileName = "Select a file",
+                Filter = "BPT files (*.bpt)|*.bpt|Text files (*.txt)|*.txt",
+                Title = "Open file"
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (Stream input = dialog.OpenFile())
+                    {
+                        LoadFromFile(input);
+                    }
+                }
+                catch (SecurityException ex)
+                {
+                    MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
+                    $"Details:\n\n{ex.StackTrace}", "Error!", MessageBoxButtons.OK);
+                }
+            }
         }
     }
 }

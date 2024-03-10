@@ -34,12 +34,15 @@
             this.ActionTypeBtn = new System.Windows.Forms.ComboBox();
             this.ResetBtn = new System.Windows.Forms.Button();
             this.CurveChooseBtn = new System.Windows.Forms.ComboBox();
+            this.MenuStrip = new System.Windows.Forms.MenuStrip();
+            this.OpenFileBtn = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.MaxPointsLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.DrawSkelCheck = new System.Windows.Forms.CheckBox();
             this.DrawControlPointsCheck = new System.Windows.Forms.CheckBox();
             this.MainTableLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
+            this.MenuStrip.SuspendLayout();
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,6 +58,7 @@
             this.MainTableLayout.Controls.Add(this.ActionTypeBtn, 3, 2);
             this.MainTableLayout.Controls.Add(this.ResetBtn, 3, 3);
             this.MainTableLayout.Controls.Add(this.CurveChooseBtn, 3, 1);
+            this.MainTableLayout.Controls.Add(this.MenuStrip, 1, 0);
             this.MainTableLayout.Controls.Add(this.StatusStrip, 1, 7);
             this.MainTableLayout.Controls.Add(this.DrawSkelCheck, 3, 6);
             this.MainTableLayout.Controls.Add(this.DrawControlPointsCheck, 3, 5);
@@ -71,6 +75,7 @@
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.MainTableLayout.Size = new System.Drawing.Size(800, 450);
             this.MainTableLayout.TabIndex = 0;
             // 
@@ -86,9 +91,7 @@
             this.MainPictureBox.TabIndex = 1;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.Click += new System.EventHandler(this.MainPictureBox_Click);
-            this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);
             this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
-            this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
             // 
             // ActionTypeBtn
             // 
@@ -101,7 +104,7 @@
             "Add Curve",
             "Add Control Point",
             "Remove Point"});
-            this.ActionTypeBtn.Location = new System.Drawing.Point(655, 98);
+            this.ActionTypeBtn.Location = new System.Drawing.Point(655, 97);
             this.ActionTypeBtn.Margin = new System.Windows.Forms.Padding(0);
             this.ActionTypeBtn.MaxDropDownItems = 2;
             this.ActionTypeBtn.Name = "ActionTypeBtn";
@@ -140,6 +143,23 @@
             this.CurveChooseBtn.Size = new System.Drawing.Size(121, 21);
             this.CurveChooseBtn.TabIndex = 4;
             this.CurveChooseBtn.SelectedIndexChanged += new System.EventHandler(this.CurveChooseBtn_SelectedIndexChanged);
+            // 
+            // MenuStrip
+            // 
+            this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.OpenFileBtn});
+            this.MenuStrip.Location = new System.Drawing.Point(20, 0);
+            this.MenuStrip.Name = "MenuStrip";
+            this.MenuStrip.Padding = new System.Windows.Forms.Padding(0);
+            this.MenuStrip.Size = new System.Drawing.Size(612, 20);
+            this.MenuStrip.TabIndex = 8;
+            // 
+            // OpenFileBtn
+            // 
+            this.OpenFileBtn.Name = "OpenFileBtn";
+            this.OpenFileBtn.Size = new System.Drawing.Size(48, 20);
+            this.OpenFileBtn.Text = "Open";
+            this.OpenFileBtn.Click += new System.EventHandler(this.OpenFileBtn_Click);
             // 
             // StatusStrip
             // 
@@ -200,11 +220,14 @@
             this.Controls.Add(this.MainTableLayout);
             this.Font = new System.Drawing.Font("Bahnschrift", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.MenuStrip;
             this.Name = "Main";
             this.Text = "Bézier Curve Generator";
             this.MainTableLayout.ResumeLayout(false);
             this.MainTableLayout.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();
+            this.MenuStrip.ResumeLayout(false);
+            this.MenuStrip.PerformLayout();
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -222,6 +245,8 @@
         private System.Windows.Forms.ToolStripStatusLabel MaxPointsLabel;
         private System.Windows.Forms.CheckBox DrawSkelCheck;
         private System.Windows.Forms.CheckBox DrawControlPointsCheck;
+        private System.Windows.Forms.MenuStrip MenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem OpenFileBtn;
     }
 }
 
